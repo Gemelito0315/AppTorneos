@@ -8,9 +8,10 @@ import { apiRequest } from '../../../../lib/api';
 import {
   Trophy, Users, ArrowLeft, PlusCircle, X, AlertCircle, CheckCircle,
   Play, Clock, Target, Award, Swords, Trash2, Edit2,
-  Medal, Hash, ChevronDown, Save, UserPlus, UserMinus,
+  Medal, Hash, ChevronDown, ChevronUp, Save, UserPlus, UserMinus,
   LayoutGrid, GitBranch, Shuffle, ShieldCheck, CheckCircle2,
-  FileText, Sparkles, ChevronRight, HelpCircle, RefreshCw, UserCheck
+  FileText, Sparkles, ChevronRight, HelpCircle, RefreshCw, UserCheck,
+  Filter, Eye, Layers
 } from 'lucide-react';
 import { TournamentBracket } from '../../../../components/TournamentBracket';
 
@@ -2079,6 +2080,18 @@ export default function TournamentManagePage() {
   const [selectedClubPlayer, setSelectedClubPlayer] = useState('');
   const [addingPlayerLoading, setAddingPlayerLoading] = useState(false);
 
+  // Control y filtros visuales para Fase de Grupos
+  const [selectedGroupFilter, setSelectedGroupFilter] = useState<string>('all');
+  const [groupViewMode, setGroupViewMode] = useState<'all' | 'standings' | 'matches'>('all');
+  const [collapsedMatches, setCollapsedMatches] = useState<Record<string, boolean>>({});
+
+  const toggleGroupCollapse = (grpName: string) => {
+    setCollapsedMatches((prev) => ({
+      ...prev,
+      [grpName]: !prev[grpName],
+    }));
+  };
+
   const fetchAll = useCallback(async () => {
     if (!id) return;
     try {
@@ -2561,31 +2574,41 @@ export default function TournamentManagePage() {
       )}
 
       {/* ── NAVEGACIÓN POR FASES (PESTAÑAS) ── */}
-      <div className="flex gap-2 border-b border-billiard-border pb-3 overflow-x-auto scrollbar-none">
+      <div className="flex gap-2 border-b border-billiard-border/60 pb-3 overflow-x-auto scrollbar-none">
         <button
           onClick={() => setActiveTab('players')}
-          className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition whitespace-nowrap ${
+          className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition whitespace-nowrap ${
             activeTab === 'players'
-              ? 'bg-billiard-green text-billiard-darker shadow-lg shadow-emerald-950/40'
-              : 'text-gray-400 hover:text-white hover:bg-billiard-felt'
+              ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 shadow-sm'
+              : 'text-gray-400 hover:text-gray-200 hover:bg-white/5 border border-transparent'
           }`}
         >
-          <Users className="w-4 h-4" />
-          <span>1. Participantes ({confirmedRegistrations.length})</span>
+          <Users className={`w-4 h-4 ${activeTab === 'players' ? 'text-emerald-400' : 'text-gray-500'}`} />
+          <span>1. Participantes</span>
+          <span className={`text-[10px] px-1.5 py-0.5 rounded-md ${
+            activeTab === 'players' ? 'bg-emerald-500/20 text-emerald-200' : 'bg-white/5 text-gray-400'
+          }`}>
+            {confirmedRegistrations.length}
+          </span>
         </button>
 
         <button
           onClick={() => setActiveTab('groups')}
-          className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition whitespace-nowrap ${
+          className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition whitespace-nowrap ${
             activeTab === 'groups'
-              ? 'bg-billiard-green text-billiard-darker shadow-lg shadow-emerald-950/40'
-              : 'text-gray-400 hover:text-white hover:bg-billiard-felt'
+              ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 shadow-sm'
+              : 'text-gray-400 hover:text-gray-200 hover:bg-white/5 border border-transparent'
           }`}
         >
-          <LayoutGrid className="w-4 h-4" />
-          <span>2. Fase de Grupos ({groupNames.length} Grupos)</span>
+          <LayoutGrid className={`w-4 h-4 ${activeTab === 'groups' ? 'text-emerald-400' : 'text-gray-500'}`} />
+          <span>2. Fase de Grupos</span>
+          <span className={`text-[10px] px-1.5 py-0.5 rounded-md ${
+            activeTab === 'groups' ? 'bg-emerald-500/20 text-emerald-200' : 'bg-white/5 text-gray-400'
+          }`}>
+            {groupNames.length} {groupNames.length === 1 ? 'grupo' : 'grupos'}
+          </span>
           {groupMatches.length > 0 && (
-            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-billiard-darker/20">
+            <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-white/5 text-gray-400 font-mono">
               {groupMatches.length} partidas
             </span>
           )}
@@ -2593,25 +2616,25 @@ export default function TournamentManagePage() {
 
         <button
           onClick={() => setActiveTab('bracket')}
-          className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition whitespace-nowrap ${
+          className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition whitespace-nowrap ${
             activeTab === 'bracket'
-              ? 'bg-billiard-green text-billiard-darker shadow-lg shadow-emerald-950/40'
-              : 'text-gray-400 hover:text-white hover:bg-billiard-felt'
+              ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 shadow-sm'
+              : 'text-gray-400 hover:text-gray-200 hover:bg-white/5 border border-transparent'
           }`}
         >
-          <GitBranch className="w-4 h-4" />
+          <GitBranch className={`w-4 h-4 ${activeTab === 'bracket' ? 'text-emerald-400' : 'text-gray-500'}`} />
           <span>3. Cuadro Eliminatorio / Llaves</span>
         </button>
 
         <button
           onClick={() => setActiveTab('results')}
-          className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition whitespace-nowrap ${
+          className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition whitespace-nowrap ${
             activeTab === 'results'
-              ? 'bg-billiard-green text-billiard-darker shadow-lg shadow-emerald-950/40'
-              : 'text-gray-400 hover:text-white hover:bg-billiard-felt'
+              ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 shadow-sm'
+              : 'text-gray-400 hover:text-gray-200 hover:bg-white/5 border border-transparent'
           }`}
         >
-          <Trophy className="w-4 h-4" />
+          <Trophy className={`w-4 h-4 ${activeTab === 'results' ? 'text-emerald-400' : 'text-gray-500'}`} />
           <span>4. Podio y Resultados Finales</span>
         </button>
       </div>
@@ -2838,233 +2861,383 @@ export default function TournamentManagePage() {
               </div>
             </div>
           ) : (
-            <div className="space-y-8">
-              {/* Barra superior de grupos */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-billiard-card border border-billiard-border">
-                <div>
-                  <h3 className="text-base font-bold text-white flex items-center space-x-2">
-                    <LayoutGrid className="w-4 h-4 text-billiard-gold" />
-                    <span>{groupNames.length} Grupos Formados ({confirmedRegistrations.length} atletas)</span>
-                  </h3>
-                  <p className="text-xs text-gray-400 mt-0.5">
-                    Clasifican los <strong>2 primeros atletas</strong> de cada grupo a la siguiente ronda.
-                  </p>
+            <div className="space-y-6">
+              {/* ── BARRA SUPERIOR DE CONTROL (LIMPIA Y HOMOGÉNEA) ── */}
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-5 rounded-3xl bg-billiard-card border border-billiard-border shadow-lg">
+                <div className="space-y-1">
+                  <div className="flex items-center space-x-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center">
+                      <LayoutGrid className="w-4 h-4 text-emerald-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-base font-bold text-white flex items-center space-x-2">
+                        <span>Fase de Grupos</span>
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-white/10 text-gray-300 font-normal">
+                          {groupNames.length} {groupNames.length === 1 ? 'grupo' : 'grupos'} · {confirmedRegistrations.length} atletas
+                        </span>
+                      </h3>
+                      <p className="text-xs text-gray-400">
+                        Clasifican los <strong className="text-gray-200">2 mejores atletas</strong> de cada grupo a la llave final.
+                      </p>
+                    </div>
+                  </div>
                 </div>
 
+                {/* Acciones principales con jerarquía homogénea */}
                 <div className="flex items-center space-x-2 flex-wrap gap-y-2">
-                  {/* Botón principal: Avanzar a Llaves Eliminatorias */}
+                  {/* Botón Principal: Avanzar a Eliminatorias */}
                   <button
                     onClick={() => setShowKnockoutModal(true)}
-                    className="flex items-center space-x-1.5 px-4 py-2 rounded-xl text-xs font-black bg-gradient-to-r from-billiard-gold to-amber-500 hover:from-amber-400 hover:to-amber-500 text-billiard-darker transition shadow-md hover:scale-105"
+                    className="flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 transition shadow-md hover:shadow-amber-500/20"
                   >
-                    <GitBranch className="w-4 h-4" />
-                    <span>⚡ Avanzar a Llaves Eliminatorias</span>
+                    <GitBranch className="w-4 h-4 text-slate-950" />
+                    <span>Avanzar a Llaves</span>
                   </button>
 
-                  {/* Simular resultados para pruebas rápidas */}
-                  {matches.some((m) => m.roundName.toLowerCase().startsWith('grupo') && m.status === 'PENDING') && (
-                    <button
-                      onClick={handleSimulateGroupMatches}
-                      className="flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-semibold border border-billiard-border hover:bg-billiard-darker text-gray-400 hover:text-white transition"
-                      title="Simular resultados para completar la fase de grupos"
-                    >
-                      <Sparkles className="w-3.5 h-3.5 text-billiard-gold" />
-                      <span>Simular Grupos (Test)</span>
-                    </button>
-                  )}
-
+                  {/* Acciones secundarias en estilo neutro/elegante */}
                   <button
                     onClick={() => setShowLateEnrollModal(true)}
-                    className="flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition shadow-sm"
+                    className="flex items-center space-x-1.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-white/[0.05] hover:bg-white/[0.09] text-gray-200 border border-white/10 transition"
                   >
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span>+ Último Momento</span>
+                    <UserPlus className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>+ Inscribir Último Momento</span>
                   </button>
 
                   <button
                     onClick={() => setShowDrawModal(true)}
-                    className="flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-bold border border-billiard-border bg-billiard-darker hover:border-billiard-gold/50 text-gray-300 hover:text-white transition"
+                    className="flex items-center space-x-1.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-white/[0.05] hover:bg-white/[0.09] text-gray-300 hover:text-white border border-white/10 transition"
                   >
-                    <Shuffle className="w-3.5 h-3.5 text-billiard-gold" />
+                    <Shuffle className="w-3.5 h-3.5 text-gray-400" />
                     <span>Re-sortear</span>
+                  </button>
+
+                  {matches.some((m) => m.roundName.toLowerCase().startsWith('grupo') && m.status === 'PENDING') && (
+                    <button
+                      onClick={handleSimulateGroupMatches}
+                      className="flex items-center space-x-1.5 px-3 py-2.5 rounded-xl text-xs font-medium bg-white/[0.03] hover:bg-white/[0.07] text-gray-400 hover:text-gray-200 border border-white/5 transition"
+                      title="Simular resultados aleatorios para pruebas rápidas"
+                    >
+                      <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Simular (Test)</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* ── SUB-BARRA: FILTROS DE GRUPO Y MODO DE VISTA ── */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-2.5 rounded-2xl bg-billiard-darker/60 border border-billiard-border/60">
+                {/* Selector de Pestaña de Grupo */}
+                <div className="flex items-center space-x-1.5 overflow-x-auto scrollbar-none py-0.5">
+                  <button
+                    onClick={() => setSelectedGroupFilter('all')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition whitespace-nowrap ${
+                      selectedGroupFilter === 'all'
+                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-sm'
+                        : 'text-gray-400 hover:text-gray-200 hover:bg-white/5 border border-transparent'
+                    }`}
+                  >
+                    Todos ({groupNames.length})
+                  </button>
+                  {groupNames.map((gn) => {
+                    const count = (groupStandings[gn] || []).length;
+                    const isSelected = selectedGroupFilter === gn;
+                    return (
+                      <button
+                        key={gn}
+                        onClick={() => setSelectedGroupFilter(gn)}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition whitespace-nowrap flex items-center space-x-1.5 ${
+                          isSelected
+                            ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-sm'
+                            : 'text-gray-400 hover:text-gray-200 hover:bg-white/5 border border-transparent'
+                        }`}
+                      >
+                        <span>{gn}</span>
+                        <span className="text-[10px] text-gray-500 font-mono">({count})</span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Modos de vista: Completo | Solo Tablas | Solo Partidas */}
+                <div className="flex items-center space-x-1 bg-black/40 p-1 rounded-xl border border-white/5 self-start sm:self-auto flex-shrink-0">
+                  <button
+                    onClick={() => setGroupViewMode('all')}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-medium transition ${
+                      groupViewMode === 'all'
+                        ? 'bg-white/10 text-white font-semibold shadow-sm'
+                        : 'text-gray-400 hover:text-gray-200'
+                    }`}
+                  >
+                    Completo
+                  </button>
+                  <button
+                    onClick={() => setGroupViewMode('standings')}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-medium transition ${
+                      groupViewMode === 'standings'
+                        ? 'bg-white/10 text-white font-semibold shadow-sm'
+                        : 'text-gray-400 hover:text-gray-200'
+                    }`}
+                  >
+                    Solo Clasificación
+                  </button>
+                  <button
+                    onClick={() => setGroupViewMode('matches')}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-medium transition ${
+                      groupViewMode === 'matches'
+                        ? 'bg-white/10 text-white font-semibold shadow-sm'
+                        : 'text-gray-400 hover:text-gray-200'
+                    }`}
+                  >
+                    Solo Partidas
                   </button>
                 </div>
               </div>
 
-              {/* Render de cada Grupo */}
-              {groupNames.map((grpName) => {
-                const standings = groupStandings[grpName] || [];
-                const gMatches = groupMatches.filter((m) => m.roundName === grpName);
+              {/* ── RENDER DE GRUPOS FILTRADOS ── */}
+              {groupNames
+                .filter((gn) => selectedGroupFilter === 'all' || selectedGroupFilter === gn)
+                .map((grpName) => {
+                  const standings = groupStandings[grpName] || [];
+                  const gMatches = groupMatches.filter((m) => m.roundName === grpName);
+                  const isMatchesCollapsed = collapsedMatches[grpName] ?? false;
 
-                return (
-                  <div
-                    key={grpName}
-                    className="rounded-3xl bg-billiard-card border border-billiard-border overflow-hidden shadow-xl space-y-4 p-5 sm:p-6"
-                  >
-                    <div className="flex items-center justify-between pb-3 border-b border-billiard-border/60">
-                      <div className="flex items-center space-x-3">
-                        <span className="w-8 h-8 rounded-xl bg-billiard-gold/20 border border-billiard-gold/40 flex items-center justify-center font-black text-billiard-gold text-xs">
-                          {grpName.replace('Grupo ', '')}
-                        </span>
-                        <div>
-                          <h4 className="text-base font-black text-white">{grpName}</h4>
-                          <p className="text-[11px] text-gray-400">
-                            {standings.length} competidores · {gMatches.length} partidas · Pasan 2 a la llave eliminatoria
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Tabla de Posiciones */}
-                    <div className="overflow-x-auto rounded-2xl border border-billiard-border/60">
-                      <table className="w-full text-left text-xs border-collapse">
-                        <thead>
-                          <tr className="bg-billiard-darker/80 text-gray-400 uppercase text-[10px] tracking-wider font-semibold border-b border-billiard-border/60">
-                            <th className="py-2.5 px-3 w-10 text-center">Pos</th>
-                            <th className="py-2.5 px-3">Atleta</th>
-                            <th className="py-2.5 px-2 text-center">PJ</th>
-                            <th className="py-2.5 px-2 text-center text-emerald-400 font-bold">PG</th>
-                            <th className="py-2.5 px-2 text-center text-amber-400 font-bold">PE</th>
-                            <th className="py-2.5 px-2 text-center text-red-400 font-bold">PP</th>
-                            <th className="py-2.5 px-2 text-center">Caramb.</th>
-                            <th className="py-2.5 px-2 text-center">Entr.</th>
-                            <th className="py-2.5 px-2 text-center text-billiard-green font-bold">Prom.</th>
-                            <th className="py-2.5 px-2 text-center">Serie</th>
-                            <th className="py-2.5 px-3 text-center text-billiard-gold font-black">Pts</th>
-                            <th className="py-2.5 px-3 text-center">Estado</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-billiard-border/40">
-                          {standings.map((row) => (
-                            <tr
-                              key={row.playerId}
-                              className={`hover:bg-billiard-felt/30 transition ${
-                                row.isQualified ? 'bg-emerald-950/10' : ''
-                              }`}
-                            >
-                              <td className="py-3 px-3 text-center font-bold text-gray-400">
-                                {row.rank}
-                              </td>
-                              <td className="py-3 px-3">
-                                <div className="flex items-center space-x-2.5">
-                                  <Avatar name={row.name} photo={row.photo} size="sm" />
-                                  <span className="font-bold text-white truncate max-w-[150px] sm:max-w-none">
-                                    {row.name}
-                                  </span>
-                                </div>
-                              </td>
-                              <td className="py-3 px-2 text-center text-gray-300 font-medium">{row.played}</td>
-                              <td className="py-3 px-2 text-center text-emerald-400 font-bold">{row.won}</td>
-                              <td className="py-3 px-2 text-center text-amber-400 font-bold">{row.drawn}</td>
-                              <td className="py-3 px-2 text-center text-red-400 font-bold">{row.lost}</td>
-                              <td className="py-3 px-2 text-center text-gray-200">{row.caroms}</td>
-                              <td className="py-3 px-2 text-center text-gray-400">{row.innings}</td>
-                              <td className="py-3 px-2 text-center font-mono font-bold text-billiard-green">
-                                {row.average.toFixed(3)}
-                              </td>
-                              <td className="py-3 px-2 text-center text-gray-300 font-semibold">{row.highRun}</td>
-                              <td className="py-3 px-3 text-center font-black text-sm text-billiard-gold">
-                                {row.points}
-                              </td>
-                              <td className="py-3 px-3 text-center">
-                                {row.isQualified ? (
-                                  <span className="inline-flex items-center space-x-1 text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-bold">
-                                    <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                                    <span>Clasificado</span>
-                                  </span>
-                                ) : (
-                                  <span className="text-[10px] text-gray-500 font-medium">En juego</span>
-                                )}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-
-                    {/* Partidas de este Grupo */}
-                    <div className="space-y-2 pt-2">
-                      <p className="text-xs font-bold text-gray-300 flex items-center space-x-1.5">
-                        <Swords className="w-3.5 h-3.5 text-billiard-green" />
-                        <span>Enfrentamientos de {grpName}:</span>
-                      </p>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        {gMatches.map((m) => (
-                          <div
-                            key={m.id}
-                            className={`p-3.5 rounded-2xl border transition-all ${
-                              m.status === 'FINISHED'
-                                ? 'bg-billiard-darker/60 border-billiard-border/80'
-                                : 'bg-billiard-card border-billiard-border hover:border-billiard-green/40'
-                            }`}
-                          >
-                            <div className="flex items-center justify-between text-[11px] text-gray-400 mb-2">
-                              <span>Mesa #{m.tableNumber || 1}</span>
-                              <span
-                                className={`font-bold px-2 py-0.5 rounded-full text-[10px] ${
-                                  m.status === 'FINISHED'
-                                    ? 'bg-emerald-500/20 text-emerald-300'
-                                    : 'bg-amber-500/20 text-amber-300'
-                                }`}
-                              >
-                                {m.status === 'FINISHED' ? '✅ Finalizado' : '⏳ Pendiente'}
-                              </span>
-                            </div>
-
-                            <div className="space-y-2 py-1">
-                              {/* Jugador 1 */}
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center space-x-2 min-w-0">
-                                  <Avatar name={m.player1Name || 'J1'} photo={m.player1Photo} size="sm" />
-                                  <span
-                                    className={`text-xs truncate ${
-                                      m.winnerId === m.player1Id ? 'font-black text-emerald-400' : 'text-gray-200'
-                                    }`}
-                                  >
-                                    {m.player1Name || 'Por definir'}
-                                  </span>
-                                </div>
-                                <span className="font-mono font-black text-sm text-white">
-                                  {m.player1Score}
-                                </span>
-                              </div>
-
-                              {/* Jugador 2 */}
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center space-x-2 min-w-0">
-                                  <Avatar name={m.player2Name || 'J2'} photo={m.player2Photo} size="sm" />
-                                  <span
-                                    className={`text-xs truncate ${
-                                      m.winnerId === m.player2Id ? 'font-black text-emerald-400' : 'text-gray-200'
-                                    }`}
-                                  >
-                                    {m.player2Name || 'Por definir'}
-                                  </span>
-                                </div>
-                                <span className="font-mono font-black text-sm text-white">
-                                  {m.player2Score}
-                                </span>
-                              </div>
-                            </div>
-
-                            <div className="pt-2 border-t border-billiard-border/50 flex items-center justify-between text-[11px] text-gray-400">
-                              <span>Entradas: {m.totalInnings || 0}</span>
-                              <button
-                                onClick={() => setDigitizingMatch(m)}
-                                className="px-3 py-1 rounded-xl bg-billiard-green/20 hover:bg-billiard-green/30 text-billiard-green font-bold text-xs transition flex items-center space-x-1"
-                              >
-                                <FileText className="w-3 h-3" />
-                                <span>{m.status === 'FINISHED' ? 'Editar Acta' : 'Digitalizar'}</span>
-                              </button>
-                            </div>
+                  return (
+                    <div
+                      key={grpName}
+                      className="rounded-3xl bg-billiard-card/90 border border-billiard-border overflow-hidden shadow-lg space-y-4 p-5 sm:p-6"
+                    >
+                      {/* Cabecera del Grupo */}
+                      <div className="flex items-center justify-between pb-3 border-b border-billiard-border/60">
+                        <div className="flex items-center space-x-3">
+                          <span className="w-8 h-8 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center font-bold text-white text-xs">
+                            {grpName.replace('Grupo ', '')}
+                          </span>
+                          <div>
+                            <h4 className="text-base font-bold text-white">{grpName}</h4>
+                            <p className="text-[11px] text-gray-400">
+                              {standings.length} competidores · {gMatches.length} partidas · Pasan 2 a llaves
+                            </p>
                           </div>
-                        ))}
+                        </div>
+
+                        {/* Botón para colapsar/expandir partidas de este grupo */}
+                        {groupViewMode === 'all' && gMatches.length > 0 && (
+                          <button
+                            onClick={() => toggleGroupCollapse(grpName)}
+                            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-white/[0.04] hover:bg-white/[0.08] text-gray-300 border border-white/10 transition"
+                          >
+                            <span>{isMatchesCollapsed ? `Ver Partidas (${gMatches.length})` : 'Ocultar Partidas'}</span>
+                            <ChevronDown
+                              className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                                isMatchesCollapsed ? '' : 'rotate-180'
+                              }`}
+                            />
+                          </button>
+                        )}
                       </div>
+
+                      {/* ── TABLA DE POSICIONES (ESTILIZADA, SOBRIA Y ELEGANTE) ── */}
+                      {groupViewMode !== 'matches' && (
+                        <div className="overflow-x-auto rounded-2xl border border-billiard-border/60 bg-billiard-darker/40">
+                          <table className="w-full text-left text-xs border-collapse">
+                            <thead>
+                              <tr className="bg-black/30 text-gray-400 uppercase text-[10px] tracking-wider font-semibold border-b border-white/5">
+                                <th className="py-2.5 px-3 w-12 text-center">Pos</th>
+                                <th className="py-2.5 px-3">Atleta</th>
+                                <th className="py-2.5 px-2 text-center font-medium">PJ</th>
+                                <th className="py-2.5 px-2 text-center font-medium">PG</th>
+                                <th className="py-2.5 px-2 text-center font-medium">PE</th>
+                                <th className="py-2.5 px-2 text-center font-medium">PP</th>
+                                <th className="py-2.5 px-2 text-center font-medium">Caramb.</th>
+                                <th className="py-2.5 px-2 text-center font-medium">Entr.</th>
+                                <th className="py-2.5 px-2 text-center font-medium">Prom.</th>
+                                <th className="py-2.5 px-2 text-center font-medium">Serie</th>
+                                <th className="py-2.5 px-3 text-center font-medium">Pts</th>
+                                <th className="py-2.5 px-3 text-center font-medium">Estado</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-white/[0.04]">
+                              {standings.map((row) => (
+                                <tr
+                                  key={row.playerId}
+                                  className={`hover:bg-white/[0.03] transition ${
+                                    row.isQualified ? 'bg-emerald-500/[0.03]' : ''
+                                  }`}
+                                >
+                                  {/* Posición con badge sutil para clasificados */}
+                                  <td className="py-3 px-3 text-center">
+                                    {row.isQualified ? (
+                                      <span className="w-6 h-6 rounded-lg bg-emerald-500/15 text-emerald-300 font-bold text-xs inline-flex items-center justify-center">
+                                        {row.rank}
+                                      </span>
+                                    ) : (
+                                      <span className="text-gray-400 font-semibold">{row.rank}</span>
+                                    )}
+                                  </td>
+
+                                  {/* Atleta */}
+                                  <td className="py-3 px-3">
+                                    <div className="flex items-center space-x-2.5">
+                                      <Avatar name={row.name} photo={row.photo} size="sm" />
+                                      <span className="font-semibold text-white truncate max-w-[150px] sm:max-w-none">
+                                        {row.name}
+                                      </span>
+                                    </div>
+                                  </td>
+
+                                  {/* Estadísticas neutras sin sobrecarga de color para ceros */}
+                                  <td className="py-3 px-2 text-center text-gray-300 font-medium">{row.played}</td>
+                                  <td className="py-3 px-2 text-center">
+                                    <span className={row.won > 0 ? 'text-emerald-400 font-semibold' : 'text-gray-400'}>
+                                      {row.won}
+                                    </span>
+                                  </td>
+                                  <td className="py-3 px-2 text-center">
+                                    <span className={row.drawn > 0 ? 'text-amber-400 font-semibold' : 'text-gray-400'}>
+                                      {row.drawn}
+                                    </span>
+                                  </td>
+                                  <td className="py-3 px-2 text-center">
+                                    <span className={row.lost > 0 ? 'text-gray-300 font-medium' : 'text-gray-400'}>
+                                      {row.lost}
+                                    </span>
+                                  </td>
+                                  <td className="py-3 px-2 text-center text-gray-200">{row.caroms}</td>
+                                  <td className="py-3 px-2 text-center text-gray-400">{row.innings}</td>
+
+                                  {/* Promedio destacado elegantemente en monospace */}
+                                  <td className="py-3 px-2 text-center font-mono font-semibold text-emerald-400/90">
+                                    {row.average.toFixed(3)}
+                                  </td>
+
+                                  <td className="py-3 px-2 text-center text-gray-300">{row.highRun}</td>
+
+                                  {/* Puntos destacados en cajita limpia */}
+                                  <td className="py-3 px-3 text-center">
+                                    <span className="font-bold text-xs text-white bg-white/10 px-2 py-0.5 rounded-md">
+                                      {row.points}
+                                    </span>
+                                  </td>
+
+                                  {/* Estado */}
+                                  <td className="py-3 px-3 text-center">
+                                    {row.isQualified ? (
+                                      <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full">
+                                        <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                                        <span>Clasifica</span>
+                                      </span>
+                                    ) : (
+                                      <span className="text-[11px] text-gray-400 font-medium">En juego</span>
+                                    )}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+
+                      {/* ── PARTIDAS / ENFRENTAMIENTOS (DISEÑO COMPACTO Y ORDENADO) ── */}
+                      {groupViewMode !== 'standings' && (!isMatchesCollapsed || groupViewMode === 'matches') && (
+                        <div className="space-y-3 pt-2">
+                          <div className="flex items-center justify-between text-xs text-gray-400 font-semibold">
+                            <span className="flex items-center space-x-1.5">
+                              <Swords className="w-3.5 h-3.5 text-gray-400" />
+                              <span>Enfrentamientos de {grpName} ({gMatches.length})</span>
+                            </span>
+                            <span className="text-[11px] text-gray-400 font-normal">
+                              {gMatches.filter((m) => m.status === 'FINISHED').length} finalizadas ·{' '}
+                              {gMatches.filter((m) => m.status !== 'FINISHED').length} pendientes
+                            </span>
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                            {gMatches.map((m) => {
+                              const isFinished = m.status === 'FINISHED';
+                              return (
+                                <div
+                                  key={m.id}
+                                  className={`p-3 rounded-2xl border transition-all ${
+                                    isFinished
+                                      ? 'bg-black/30 border-white/5 opacity-85 hover:opacity-100'
+                                      : 'bg-billiard-darker/70 border-billiard-border/80 hover:border-emerald-500/30'
+                                  }`}
+                                >
+                                  {/* Cabecera de la partida */}
+                                  <div className="flex items-center justify-between text-[11px] text-gray-400 mb-2">
+                                    <span className="font-semibold text-gray-300 bg-white/5 px-2 py-0.5 rounded-md">
+                                      Mesa #{m.tableNumber || 1}
+                                    </span>
+                                    <span
+                                      className={`font-semibold px-2 py-0.5 rounded-md text-[10px] ${
+                                        isFinished
+                                          ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                                          : 'bg-amber-500/10 text-amber-300 border border-amber-500/20'
+                                      }`}
+                                    >
+                                      {isFinished ? 'Finalizado' : 'Pendiente'}
+                                    </span>
+                                  </div>
+
+                                  {/* Contendientes en formato marcador deportivo */}
+                                  <div className="space-y-1.5 py-1">
+                                    {/* Atleta 1 */}
+                                    <div className="flex items-center justify-between p-1.5 rounded-xl bg-black/20">
+                                      <div className="flex items-center space-x-2 min-w-0 pr-2">
+                                        <Avatar name={m.player1Name || 'J1'} photo={m.player1Photo} size="sm" />
+                                        <span
+                                          className={`text-xs truncate ${
+                                            m.winnerId === m.player1Id ? 'font-bold text-emerald-400' : 'text-gray-200'
+                                          }`}
+                                        >
+                                          {m.player1Name || 'Por definir'}
+                                        </span>
+                                      </div>
+                                      <span className="font-mono font-bold text-xs text-white bg-black/60 border border-white/10 px-2.5 py-0.5 rounded-md min-w-[28px] text-center">
+                                        {m.player1Score}
+                                      </span>
+                                    </div>
+
+                                    {/* Atleta 2 */}
+                                    <div className="flex items-center justify-between p-1.5 rounded-xl bg-black/20">
+                                      <div className="flex items-center space-x-2 min-w-0 pr-2">
+                                        <Avatar name={m.player2Name || 'J2'} photo={m.player2Photo} size="sm" />
+                                        <span
+                                          className={`text-xs truncate ${
+                                            m.winnerId === m.player2Id ? 'font-bold text-emerald-400' : 'text-gray-200'
+                                          }`}
+                                        >
+                                          {m.player2Name || 'Por definir'}
+                                        </span>
+                                      </div>
+                                      <span className="font-mono font-bold text-xs text-white bg-black/60 border border-white/10 px-2.5 py-0.5 rounded-md min-w-[28px] text-center">
+                                        {m.player2Score}
+                                      </span>
+                                    </div>
+                                  </div>
+
+                                  {/* Pie de tarjeta con acción */}
+                                  <div className="pt-2 mt-1 border-t border-white/5 flex items-center justify-between text-[11px] text-gray-400">
+                                    <span className="font-mono text-[10px]">
+                                      Entradas: <strong className="text-gray-300">{m.totalInnings || 0}</strong>
+                                    </span>
+                                    <button
+                                      onClick={() => setDigitizingMatch(m)}
+                                      className="px-2.5 py-1 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 font-semibold text-[11px] transition flex items-center space-x-1"
+                                    >
+                                      <FileText className="w-3 h-3" />
+                                      <span>{isFinished ? 'Acta' : 'Digitalizar'}</span>
+                                    </button>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
             </div>
           )}
         </div>
