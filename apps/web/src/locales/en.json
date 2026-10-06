@@ -1,0 +1,97 @@
+{
+  "app": {
+    "title": "BillarPro",
+    "subtitle": "Billiards Tournament Platform",
+    "description": "Professional tournament management for 3-Cushion, Pool, and Free Game with verifiable draws."
+  },
+  "nav": {
+    "home": "Home",
+    "tournaments": "Public Tournaments",
+    "dashboard": "My Club",
+    "newTournament": "Create Tournament",
+    "login": "Log In",
+    "register": "Register Club",
+    "logout": "Log Out"
+  },
+  "hero": {
+    "badge": "2026 Edition • Pro Billiards",
+    "title": "Organize Billiards Tournaments Like a Pro",
+    "description": "From local club quick tournaments to major national opens. Transparent random draws and live results.",
+    "ctaExplore": "Explore Tournaments",
+    "ctaCreate": "Create My First Tournament"
+  },
+  "tournaments": {
+    "title": "Active & Upcoming Tournaments",
+    "subtitle": "Public events organized by premier billiard clubs",
+    "searchPlaceholder": "Search by tournament name or venue...",
+    "filterAll": "All modalities",
+    "empty": "No tournaments registered yet.",
+    "venue": "Venue",
+    "dates": "Dates",
+    "modality": "Modality",
+    "status": "Status",
+    "viewDetails": "View Tournament",
+    "detailsTitle": "Official Tournament Information",
+    "hostedBy": "Hosted by",
+    "contact": "Contact & Inquiries",
+    "backToList": "← Back to tournament list",
+    "publicNotice": "Official public view • No account needed"
+  },
+  "dashboard": {
+    "welcome": "Organizer Dashboard",
+    "clubLabel": "Club",
+    "myTournaments": "My Tournaments",
+    "createBtn": "+ New Tournament",
+    "empty": "Your club does not have any tournaments yet. Create the first one now!",
+    "edit": "Edit",
+    "delete": "Delete",
+    "viewPublic": "Public Page",
+    "confirmDelete": "Are you sure you want to delete this tournament?"
+  },
+  "form": {
+    "name": "Tournament Name",
+    "namePlaceholder": "e.g. 2026 National 3-Cushion Championship",
+    "venue": "Venue / Club & Address",
+    "venuePlaceholder": "e.g. Masters Billiards Club - 50th Street #12-34",
+    "modality": "Billiards Modality",
+    "selectModality": "Select a modality",
+    "startDate": "Start Date & Time",
+    "endDate": "End Date & Time",
+    "status": "Initial Status",
+    "isPublic": "Make visible on public listing",
+    "description": "Description & Rules",
+    "descriptionPlaceholder": "Tournament details, qualification format, points...",
+    "contactPhone": "Contact Phone (WhatsApp)",
+    "contactEmail": "Contact Email",
+    "save": "Save Tournament",
+    "saving": "Saving...",
+    "cancel": "Cancel"
+  },
+  "auth": {
+    "loginTitle": "Organizer Login",
+    "loginSubtitle": "Sign in to manage your club's tournaments",
+    "registerTitle": "Register Your Club",
+    "registerSubtitle": "Create your club account and start hosting events",
+    "email": "Email Address",
+    "password": "Password",
+    "fullName": "Administrator Full Name",
+    "orgName": "Club or League Name",
+    "city": "City",
+    "phone": "Phone",
+    "submitLogin": "Sign In",
+    "submitRegister": "Create Club & Account",
+    "haveAccount": "Already have an account?",
+    "noAccount": "Don't have a registered club yet?",
+    "registerHere": "Register here",
+    "loginHere": "Sign in"
+  },
+  "status": {
+    "DRAFT": "Draft",
+    "REGISTRATION_OPEN": "Registration Open",
+    "DRAW_PENDING": "Draw Pending",
+    "DRAW_COMPLETED": "Draw Completed",
+    "IN_PROGRESS": "In Progress",
+    "FINISHED": "Finished",
+    "CANCELLED": "Cancelled"
+  }
+}

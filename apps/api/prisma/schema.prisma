@@ -1,0 +1,261 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Organizacion {
+  id          String       @id @default(uuid())
+  name        String
+  slug        String       @unique
+  description String?
+  logoUrl     String?
+  phone       String?
+  email       String?
+  city        String?
+  country     String       @default("CO")
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  users       Usuario[]
+  tournaments Torneo[]
+  auditLogs   AuditLog[]
+  players     JugadorClub[]
+  circuits    CircuitoLiga[]
+}
+
+model Usuario {
+  id               String        @id @default(uuid())
+  email            String        @unique
+  passwordHash     String
+  fullName         String
+  role             String        // SUPERADMIN, ADMIN_CLUB, ORGANIZADOR, ARBITRO, ATLETA
+  phone            String?
+  refreshTokenHash String?
+  isActive         Boolean       @default(true)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  organizationId   String?
+  organization     Organizacion? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  auditLogs        AuditLog[]
+
+  @@index([organizationId])
+}
+
+model Modalidad {
+  id          String   @id @default(uuid())
+  name        String
+  code        String   @unique
+  description String?
+  isDefault   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  tournaments Torneo[]
+}
+
+// ==========================================
+// FASE 2: BASE DE JUGADORES DEL CLUB
+// ==========================================
+model JugadorClub {
+  id             String        @id @default(uuid())
+  fullName       String
+  nickname       String?
+  phone          String?
+  email          String?
+  handicap       Int           @default(0)
+  baseAverage    Float         @default(0.0)
+  photoUrl       String?
+  notes          String?
+  isActive       Boolean       @default(true)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  organizationId String
+  organization   Organizacion  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  registrations  Inscripcion[]
+  results        ResultadoTorneo[]
+
+  @@index([organizationId])
+}
+
+// ==========================================
+// FASE 2: CIRCUITOS / LIGAS CON INCENTIVOS
+// ==========================================
+model CircuitoLiga {
+  id              String        @id @default(uuid())
+  name            String        // Ej: "Circuito Nocturno Viernes"
+  description     String?
+  incentiveRule   String?       // Texto libre: "3 victorias seguidas = Taco Predator"
+  targetStreak    Int           @default(3)
+  pointsRuleJson  String?       // JSON: {"1": 10, "2": 6, "3": 4, "4": 2, "other": 1}
+  isActive        Boolean       @default(true)
+  isPublic        Boolean       @default(true)
+  status          String        @default("ACTIVE") // ACTIVE, PAUSED, FINISHED
+  startDate       DateTime?
+  endDate         DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  organizationId  String
+  organization    Organizacion  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  tournaments     Torneo[]
+
+  @@index([organizationId])
+}
+
+model Torneo {
+  id             String        @id @default(uuid())
+  name           String
+  description    String?
+  venue          String
+  startDate      DateTime
+  endDate        DateTime
+  status         String        @default("DRAFT")
+  isPublic       Boolean       @default(true)
+  contactPhone   String?
+  contactEmail   String?
+  posterUrl      String?
+
+  // Fase 2: campos adicionales
+  isTemplate     Boolean       @default(false)
+  templateName   String?
+  entryFee       Float?        // Tarifa ordinaria (solo informativa)
+  lateEntryFee   Float?        // Tarifa extraordinaria (solo informativa)
+  maxParticipants Int?
+  caromsTarget   Int?          // Carambolas objetivo
+  inningsLimit   Int?          // Límite de entradas
+
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  organizationId String
+  organization   Organizacion  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  modalityId     String
+  modality       Modalidad     @relation(fields: [modalityId], references: [id])
+
+  // Relación opcional con circuito
+  circuitId      String?
+  circuit        CircuitoLiga? @relation(fields: [circuitId], references: [id], onDelete: SetNull)
+
+  registrations  Inscripcion[]
+  results        ResultadoTorneo[]
+  matches        Partida[]
+
+  @@index([organizationId])
+  @@index([modalityId])
+  @@index([circuitId])
+}
+
+// ==========================================
+// FASE 3: PARTIDAS Y MARCADOR EN VIVO
+// ==========================================
+model Partida {
+  id              String       @id @default(uuid())
+  roundName       String       // "Grupo A", "Octavos", "Cuartos", "Semifinal", "Final"
+  matchNumber     Int          @default(1)
+  tableNumber     Int?         // Mesa asignada (ej: 1, 2, 3)
+  status          String       @default("PENDING") // PENDING, IN_PROGRESS, FINISHED
+  scheduledTime   DateTime?
+
+  // Jugador 1
+  player1Id       String?
+  player1Name     String?
+  player1Photo    String?
+  player1Score    Int          @default(0) // Carambolas / Bolas
+  player1Innings  Int          @default(0) // Entradas
+  player1HighRun  Int          @default(0) // Mayor serie
+  player1Average  Float        @default(0.0) // Promedio (Score / Innings)
+
+  // Jugador 2
+  player2Id       String?
+  player2Name     String?
+  player2Photo    String?
+  player2Score    Int          @default(0)
+  player2Innings  Int          @default(0)
+  player2HighRun  Int          @default(0)
+  player2Average  Float        @default(0.0)
+
+  // Total entradas del partido
+  totalInnings    Int          @default(0)
+
+  // Ganador
+  winnerId        String?
+  winnerName      String?
+
+  tournamentId    String
+  tournament      Torneo       @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@index([tournamentId])
+  @@index([status])
+}
+
+// ==========================================
+// FASE 2: INSCRIPCIONES
+// ==========================================
+model Inscripcion {
+  id           String      @id @default(uuid())
+  status       String      @default("CONFIRMED") // PENDING, CONFIRMED, WITHDRAWN
+  seedNumber   Int?
+  handicap     Int         @default(0)
+  notes        String?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  tournamentId String
+  tournament   Torneo      @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+
+  playerId     String
+  player       JugadorClub @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  @@unique([tournamentId, playerId])
+  @@index([tournamentId])
+  @@index([playerId])
+}
+
+// ==========================================
+// FASE 2: RESULTADOS HISTÓRICOS Y RACHAS
+// ==========================================
+model ResultadoTorneo {
+  id             String      @id @default(uuid())
+  position       Int         // 1 = Campeón, 2 = Subcampeón, 3, etc.
+  pointsAwarded  Int         @default(0)
+  createdAt      DateTime    @default(now())
+
+  tournamentId   String
+  tournament     Torneo      @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+
+  playerId       String
+  player         JugadorClub @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  @@index([tournamentId])
+  @@index([playerId])
+}
+
+model AuditLog {
+  id             String        @id @default(uuid())
+  action         String
+  entityType     String
+  entityId       String
+  detailsJson    String?
+  ipAddress      String?
+  createdAt      DateTime      @default(now())
+
+  organizationId String?
+  organization   Organizacion? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+
+  userId         String?
+  user           Usuario?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId])
+  @@index([userId])
+}

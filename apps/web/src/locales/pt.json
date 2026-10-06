@@ -1,0 +1,97 @@
+{
+  "app": {
+    "title": "BillarPro",
+    "subtitle": "Plataforma de Campeonatos de Bilhar",
+    "description": "Gestão profissional de torneios de bilhar 3 tabelas, pool e livre com sorteios verificáveis."
+  },
+  "nav": {
+    "home": "Início",
+    "tournaments": "Torneios Públicos",
+    "dashboard": "Meu Clube",
+    "newTournament": "Criar Torneio",
+    "login": "Entrar",
+    "register": "Registrar Clube",
+    "logout": "Sair"
+  },
+  "hero": {
+    "badge": "Edição 2026 • Bilhar Profissional",
+    "title": "Organize Campeonatos de Bilhar com Excelência",
+    "description": "De torneios rápidos de clube a grandes abertos nacionais. Sorteios aleatórios transparentes e resultados ao vivo.",
+    "ctaExplore": "Explorar Torneios",
+    "ctaCreate": "Criar Meu Primeiro Torneio"
+  },
+  "tournaments": {
+    "title": "Torneios Ativos e Próximos",
+    "subtitle": "Eventos públicos organizados pelos melhores clubes",
+    "searchPlaceholder": "Buscar por nome ou local...",
+    "filterAll": "Todas as modalidades",
+    "empty": "Nenhum torneio cadastrado até o momento.",
+    "venue": "Local",
+    "dates": "Datas",
+    "modality": "Modalidade",
+    "status": "Estado",
+    "viewDetails": "Ver Torneio",
+    "detailsTitle": "Informações Oficiais do Torneio",
+    "hostedBy": "Organizado por",
+    "contact": "Contato e Informações",
+    "backToList": "← Voltar à lista de torneios",
+    "publicNotice": "Visualização pública oficial • Sem necessidade de login"
+  },
+  "dashboard": {
+    "welcome": "Painel do Organizador",
+    "clubLabel": "Clube",
+    "myTournaments": "Meus Torneios",
+    "createBtn": "+ Novo Torneio",
+    "empty": "Seu clube ainda não tem torneios criados. Crie o primeiro agora!",
+    "edit": "Editar",
+    "delete": "Excluir",
+    "viewPublic": "Página Pública",
+    "confirmDelete": "Tem certeza que deseja excluir este torneio?"
+  },
+  "form": {
+    "name": "Nome do Torneio",
+    "namePlaceholder": "Ex: Grande Aberto Nacional de 3 Tabelas 2026",
+    "venue": "Local / Clube e Endereço",
+    "venuePlaceholder": "Ex: Sede do Clube dos Mestres - Rua 50, nº 123",
+    "modality": "Modalidade de Bilhar",
+    "selectModality": "Selecione uma modalidade",
+    "startDate": "Data e Hora de Início",
+    "endDate": "Data e Hora de Término",
+    "status": "Estado Inicial",
+    "isPublic": "Tornar visível na lista pública",
+    "description": "Descrição e Regulamento",
+    "descriptionPlaceholder": "Detalhes do torneio, formato de grupos, carambolas...",
+    "contactPhone": "Telefone de Contato (WhatsApp)",
+    "contactEmail": "E-mail de Contato",
+    "save": "Salvar Torneio",
+    "saving": "Salvando...",
+    "cancel": "Cancelar"
+  },
+  "auth": {
+    "loginTitle": "Acesso dos Organizadores",
+    "loginSubtitle": "Entre para gerenciar os torneios do seu clube",
+    "registerTitle": "Cadastre seu Clube",
+    "registerSubtitle": "Crie a conta do seu clube esportivo e comece a organizar",
+    "email": "E-mail",
+    "password": "Senha",
+    "fullName": "Nome Completo do Administrador",
+    "orgName": "Nome do Clube ou Liga",
+    "city": "Cidade",
+    "phone": "Telefone",
+    "submitLogin": "Entrar",
+    "submitRegister": "Criar Clube e Conta",
+    "haveAccount": "Já possui uma conta?",
+    "noAccount": "Ainda não tem clube cadastrado?",
+    "registerHere": "Cadastre-se aqui",
+    "loginHere": "Faça login"
+  },
+  "status": {
+    "DRAFT": "Rascunho",
+    "REGISTRATION_OPEN": "Inscrições Abertas",
+    "DRAW_PENDING": "Aguardando Sorteio",
+    "DRAW_COMPLETED": "Sorteado",
+    "IN_PROGRESS": "Em Andamento",
+    "FINISHED": "Finalizado",
+    "CANCELLED": "Cancelado"
+  }
+}

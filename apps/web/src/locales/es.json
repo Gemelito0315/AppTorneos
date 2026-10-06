@@ -1,0 +1,97 @@
+{
+  "app": {
+    "title": "BillarPro",
+    "subtitle": "Plataforma de Campeonatos de Billar",
+    "description": "Gestión profesional de torneos de billar a 3 bandas, pool y libre con sorteos verificables."
+  },
+  "nav": {
+    "home": "Inicio",
+    "tournaments": "Torneos Públicos",
+    "dashboard": "Mi Club",
+    "newTournament": "Crear Torneo",
+    "login": "Ingresar",
+    "register": "Registrar Club",
+    "logout": "Cerrar Sesión"
+  },
+  "hero": {
+    "badge": "Edición 2026 • Billar Profesional",
+    "title": "Organiza Campeonatos de Billar de Manera Profesional",
+    "description": "Desde torneos relámpago de club hasta grandes abiertos nacionales. Sorteos aleatorios transparentes y resultados en vivo.",
+    "ctaExplore": "Explorar Torneos",
+    "ctaCreate": "Crear Mi Primer Torneo"
+  },
+  "tournaments": {
+    "title": "Torneos Activos y Próximos",
+    "subtitle": "Eventos públicos organizados por los mejores clubes",
+    "searchPlaceholder": "Buscar torneo por nombre o sede...",
+    "filterAll": "Todas las modalidades",
+    "empty": "No hay torneos registrados todavía.",
+    "venue": "Sede",
+    "dates": "Fechas",
+    "modality": "Modalidad",
+    "status": "Estado",
+    "viewDetails": "Ver Torneo",
+    "detailsTitle": "Información Oficial del Torneo",
+    "hostedBy": "Organizado por",
+    "contact": "Contacto y Consultas",
+    "backToList": "← Volver a la lista de torneos",
+    "publicNotice": "Vista pública oficial • Sin necesidad de inicio de sesión"
+  },
+  "dashboard": {
+    "welcome": "Panel del Organizador",
+    "clubLabel": "Club",
+    "myTournaments": "Mis Torneos",
+    "createBtn": "+ Nuevo Torneo",
+    "empty": "Tu club aún no tiene torneos creados. ¡Crea el primero ahora!",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "viewPublic": "Página Pública",
+    "confirmDelete": "¿Estás seguro de que deseas eliminar este torneo?"
+  },
+  "form": {
+    "name": "Nombre del Torneo",
+    "namePlaceholder": "Ej. Gran Abierto Nacional de 3 Bandas 2026",
+    "venue": "Sede / Club y Dirección",
+    "venuePlaceholder": "Ej. Sede Central Club Los Maestros - Calle 50 # 12-34",
+    "modality": "Modalidad de Billar",
+    "selectModality": "Selecciona una modalidad",
+    "startDate": "Fecha y Hora de Inicio",
+    "endDate": "Fecha y Hora de Cierre",
+    "status": "Estado Inicial",
+    "isPublic": "Hacer visible en la lista pública",
+    "description": "Descripción y Reglamento",
+    "descriptionPlaceholder": "Detalles del torneo, formato de clasificación, carambolas...",
+    "contactPhone": "Teléfono de Contacto (WhatsApp)",
+    "contactEmail": "Correo de Contacto",
+    "save": "Guardar Torneo",
+    "saving": "Guardando...",
+    "cancel": "Cancelar"
+  },
+  "auth": {
+    "loginTitle": "Acceso a Organizadores",
+    "loginSubtitle": "Ingresa a administrar los torneos de tu club",
+    "registerTitle": "Registra Tu Club",
+    "registerSubtitle": "Crea la cuenta de tu club deportivo y comienza a organizar",
+    "email": "Correo Electrónico",
+    "password": "Contraseña",
+    "fullName": "Nombre Completo del Administrador",
+    "orgName": "Nombre del Club o Liga",
+    "city": "Ciudad",
+    "phone": "Teléfono",
+    "submitLogin": "Iniciar Sesión",
+    "submitRegister": "Crear Club y Cuenta",
+    "haveAccount": "¿Ya tienes una cuenta?",
+    "noAccount": "¿Aún no tienes club registrado?",
+    "registerHere": "Regístrate aquí",
+    "loginHere": "Inicia sesión"
+  },
+  "status": {
+    "DRAFT": "Borrador",
+    "REGISTRATION_OPEN": "Inscripciones Abiertas",
+    "DRAW_PENDING": "Pendiente de Sorteo",
+    "DRAW_COMPLETED": "Sorteado",
+    "IN_PROGRESS": "En Curso",
+    "FINISHED": "Finalizado",
+    "CANCELLED": "Cancelado"
+  }
+}
